@@ -6,7 +6,7 @@ from nca.core.actor.actors import Actors
 from nca.core.actor.age import GenerationalAge
 from nca.core.actor.individual import Individual
 from nca.core.ecology.metrics import PopulationMetrics, IndividualMetrics
-from visualization.analysis.statistics import MeasurementStatistics
+from analysis.statistics import MeasurementStatistics
 
 
 class Reporter:

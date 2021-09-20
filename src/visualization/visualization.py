@@ -4,7 +4,7 @@ from typing import List, Dict
 import matplotlib.pyplot as plt
 import numpy as np
 
-from visualization.analysis.statistics import Statistics
+from analysis.statistics import Statistics
 
 
 class Visualization:
@@ -71,5 +71,3 @@ class StatisticsVisualization:
         plt.legend(["Maximum", "Median", 'Minimum', 'IQR'])
         if show:
             plt.show()
-
-        plt.close()

@@ -9,7 +9,7 @@ import numpy as np
 
 from nca.core.actor.individual import Individual
 from nca.core.actor.measures import BehavioralMeasurement, EpigeneticMeasurement, MorphologicalMeasurement, Measurement
-from visualization.analysis.statistics import Statistics
+from analysis.statistics import Statistics
 
 
 class Metrics:

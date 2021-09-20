@@ -21,4 +21,4 @@ class TestEvolution(unittest.TestCase):
         time_series_visualization(population_ecology.management.population.population_metrics)
         viz = PopulationFitnessVisualization(population_ecology.management.population)
         viz.prepare()
-        viz.visualize()
+        viz.visualize(True)
