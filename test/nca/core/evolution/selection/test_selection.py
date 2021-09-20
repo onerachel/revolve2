@@ -2,8 +2,6 @@ import unittest
 from typing import List
 
 from abstract.configurations import PopulationConfiguration
-from nca.core.actor.actors import Actors
-from nca.core.actor.individual import Individual
 from nca.core.actor.individual_factory import ActorFactory
 from nca.core.ecology.population import Population
 from nca.core.evolution.selection.parent_selection import NullParentSelection

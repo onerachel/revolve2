@@ -1,7 +1,5 @@
 import unittest
 
-import numpy as np
-
 from nca.core.actor.actors import Actors
 from nca.core.actor.individual_factory import ActorFactory
 from nca.core.ecology.speciation.compatibility import Compatibility

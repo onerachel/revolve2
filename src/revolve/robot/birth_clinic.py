@@ -7,7 +7,7 @@ from nca.core.actor.individual import Individual
 from nca.core.actor.actors import Actors
 from revolve.robot.body.body import RobotBody
 
-from revolve.robot.body.body_builder import BodyBuilder, RobotBodyBuilder
+from revolve.robot.body.body_builder import RobotBodyBuilder
 from revolve.robot.brain.brain import RobotBrain
 from revolve.robot.brain.brain_builder import BrainBuilder, RobotBrainBuilder, AgentBrainBuilder
 from revolve.robot.development_request import DevelopmentRequest, BrainDevelopmentRequest, BodyDevelopmentRequest

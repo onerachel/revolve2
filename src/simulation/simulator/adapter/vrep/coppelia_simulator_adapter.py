@@ -1,11 +1,7 @@
-import time
-
 import numpy as np
 
 from nca.core.actor.agent import Agent
-from resources import vrep
 from revolve.evosphere.ecosphere import Ecosphere
-from revolve.robot.robot import Robot
 from simulation.simulation_measures import SimulationMeasures
 from simulation.simulator.adapter.simulation_adapters import AgentSimulatorAdapter
 from simulation.simulator.adapter.vrep.robobo.robobo_environment import RoboboEnvironment

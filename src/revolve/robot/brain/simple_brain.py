@@ -1,4 +1,3 @@
-from abc import ABC
 
 from revolve.robot.brain.brain import Brain
 

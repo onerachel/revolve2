@@ -1,6 +1,4 @@
-import time
-
-from revolve.evosphere.coppelia import CoppeliaEvosphere
+from revolve.evosphere.adaptations.coppelia_evosphere import CoppeliaEvosphere
 from revolve.evosphere.ecosphere import CoppeliaEcosphere
 from simulation.simulator.adapter.vrep.coppelia_simulator_adapter import CoppeliaSimulatorAdapter
 

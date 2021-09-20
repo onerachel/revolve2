@@ -1,12 +1,11 @@
 from typing import List
 
-from .compatibility import Compatibility
-from .genus import Genus
-from ..population import Population
-from ..population_management import PopulationManagement
 from abstract.configurations import SpeciationConfiguration
-from ...actor.actors import Actors
-from ...actor.individual import Individual
+from nca.core.actor.actors import Actors
+from nca.core.actor.individual import Individual
+from nca.core.ecology.population import Population
+from nca.core.ecology.population_management import PopulationManagement
+from nca.core.ecology.speciation.genus import Genus
 
 
 class GenusManagement(PopulationManagement):

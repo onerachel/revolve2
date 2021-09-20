@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from visualization.analysis.statistics import Statistics
+from analysis.statistics import Statistics
 
 
 class SummaryStatistics(Statistics):

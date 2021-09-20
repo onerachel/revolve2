@@ -1,8 +1,7 @@
 import unittest
 
-from nca.core.genome.grammar.grammar_initialization import GrammarInitialization, LSystemInitialization
+from nca.core.genome.grammar.grammar_initialization import LSystemInitialization
 from nca.core.genome.grammar.lindenmayer_system import LSystemGenotype
-from test.nca.core.grammar.test_alphabet import TestColorSymbol
 
 
 class LSystemTest(unittest.TestCase):

@@ -2,7 +2,6 @@ from abc import abstractmethod
 from typing import List, Dict
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from analysis.statistics import Statistics
 

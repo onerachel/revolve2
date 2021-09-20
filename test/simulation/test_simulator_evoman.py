@@ -3,9 +3,7 @@ import unittest
 from nca.core.actor.agent import Agent
 from nca.core.evolution.evolutionary_configurations import GeneticAlgorithmConfiguration
 from nca.core.genome.genotype import Genotype
-from nca.evolution import Evolution
-from revolve.evosphere.biosphere import Biosphere
-from revolve.evosphere.evoman import EvomanEcosphere, EvomanBiosphere
+from revolve.evosphere.adaptations.evoman_evosphere import EvomanEcosphere, EvomanBiosphere
 from revolve.evosphere.evosphere import Evosphere
 from revolve.robot.brain.neural_network_brain import NeuralNetworkBrain
 from simulation.simulation_manager import SimulationManager

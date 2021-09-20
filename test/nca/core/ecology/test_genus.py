@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 from nca.core.actor.individual import Individual
-from nca.core.actor.individual_factory import ActorFactory, Characterization
+from nca.core.actor.individual_factory import ActorFactory
 from nca.core.ecology.population import Population
 from nca.core.ecology.speciation.compatibility import Compatibility
 from nca.core.ecology.speciation.genus import Genus

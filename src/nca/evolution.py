@@ -3,7 +3,6 @@ from nca.core.actor.actors import Actors
 from nca.core.actor.fitness_evaluation import OnesFitness, FitnessEvaluation
 from nca.core.actor.individual_factory import ActorFactory
 from nca.core.ecology import PopulationEcology
-from nca.core.ecology.speciation.genus_management import GenusManagement
 from nca.core.evolution.evolutionary_algorithm import EvolutionaryAlgorithm
 from nca.core.evolution.evolutionary_configurations import GeneticAlgorithmConfiguration, EvolutionaryConfiguration
 

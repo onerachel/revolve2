@@ -11,7 +11,7 @@ from nca.core.genome.genotype import Genotype
 from nca.core.genome.operators.initialization import UniformInitialization, GaussianInitialization, BinaryInitialization, \
     IntegerInitialization
 from nca.core.genome.representations.representation import Representation
-from nca.core.genome.representations.tree_representation import TreeRepresentation, CoordinateTreeRepresentation
+from nca.core.genome.representations.tree_representation import CoordinateTreeRepresentation
 from nca.core.genome.representations.valued_representation import ValuedRepresentation
 
 

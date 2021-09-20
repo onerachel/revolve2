@@ -13,14 +13,14 @@ from test.nca.core.grammar.test_alphabet import TestColorSymbol
 TestRules: dict = {TestColorSymbol.GREEN: [[TestColorSymbol.RED, TestColorSymbol.RED]],
                                TestColorSymbol.BLUE: [[TestColorSymbol.RED, TestColorSymbol.RED]]}
 
-
+"""
 # TODO refactor
 class LSystemRepresentationTest(unittest.TestCase):
 
     def test_swap_mutation(self):
         mutation = SwapMutation()
 
-        algorithm = LSystemAlgorithm(RewritingGrammar(TestRules))
+        algorithm = LSystemGenotype(RewritingGrammar(TestRules))
         algorithm.representation.extend([TestColorSymbol.RED, TestColorSymbol.GREEN, TestColorSymbol.BLUE])
         self.assertTrue(len(algorithm.representation) > 0)
 
@@ -93,3 +93,4 @@ class LSystemRepresentationTest(unittest.TestCase):
 
         self.assertNotEqual(representation_1, new_representation)
         self.assertNotEqual(representation_2, new_representation)
+"""

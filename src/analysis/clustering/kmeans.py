@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.cluster import KMeans
-from scipy.cluster.vq import whiten, vq, kmeans, kmeans2
+from scipy.cluster.vq import whiten, vq
+import matplotlib.pyplot as plt
 
 
 class KMeans:

@@ -1,4 +1,4 @@
-from matplotlib.mathtext import List
+from typing import List
 
 from nca.core.evolution.conditions.initialization import Initialization
 

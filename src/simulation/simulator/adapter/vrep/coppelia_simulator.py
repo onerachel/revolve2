@@ -1,4 +1,3 @@
-import os
 import time
 
 from abstract.sequential_identifier import SequentialIdentifier

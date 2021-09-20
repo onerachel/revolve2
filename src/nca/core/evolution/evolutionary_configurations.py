@@ -2,7 +2,7 @@ from abstract.configuration import Configuration
 from nca.core.evolution.conditions.initialization import Initialization
 from nca.core.evolution.conditions.special_features import SpecialFeatures
 from nca.core.evolution.conditions.condition import Condition, EvaluationsCondition
-from nca.core.evolution.selection.parent_selection import RouletteWheelSelection, TournamentSelection
+from nca.core.evolution.selection.parent_selection import TournamentSelection
 from nca.core.evolution.selection.selection import ParentSelection, SurvivorSelection
 from nca.core.evolution.selection.survivor_selection import FitnessSteadyStateSelection
 from nca.core.genome.operators.initialization import UniformInitialization

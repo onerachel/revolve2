@@ -1,6 +1,5 @@
 import string
 import time
-from typing import Dict, List
 
 from .population_management import PopulationManagement
 from abstract.behavioral.memento import Memento

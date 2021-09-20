@@ -1,10 +1,11 @@
 from typing import List
+
+from analysis.statistics import Statistics
+from analysis.statistics_plotter import plot_statistics_measures_list
 from nca.core.actor.fitness_evaluation import OnesFitness, FitnessEvaluation
 from nca.core.actor.individual_factory import ActorFactory
 from nca.core.evolution.evolutionary_configurations import EvolutionaryConfiguration
 from nca.repeated_evolution import RepeatedEvolution
-from visualization.analysis.statistics import Statistics
-from visualization.analysis.statistics_plotter import plot_statistics_measures_list
 
 
 class ComparativeEvolution:

@@ -1,4 +1,4 @@
-from revolve.tol import DevelopmentalLearner
+from revolve.tol.developmental_learning import DevelopmentalLearner
 
 
 class ReinforcementLearner(DevelopmentalLearner):

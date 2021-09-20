@@ -4,6 +4,7 @@ from enum import Enum
 
 import numpy as np
 
+
 class Coordinate:
     def __init__(self, x: int, y: int):
         self.x = x

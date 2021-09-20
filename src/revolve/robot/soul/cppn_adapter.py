@@ -6,7 +6,6 @@ import neat
 from shutil import copyfile
 
 from nca.experiment_manager import ExperimentManager
-from revolve.robot.brain.brain import Brain
 
 
 class CPPNAdapter:
