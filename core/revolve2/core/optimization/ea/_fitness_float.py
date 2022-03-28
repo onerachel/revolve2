@@ -13,7 +13,7 @@ from .fitness_float_schema import DbFitnessFloat
 class FitnessFloat(float, Tableable):
     @classmethod
     async def create_tables(cls, session: AsyncSession) -> None:
-        await (await session.connection()).run_sync(DbFitnessFloat.metadata.create_all)
+        await (await session.connection()).run_sync(DbBase.metadata.create_all)
 
     @classmethod
     def identifying_table(cls) -> str:
