@@ -131,8 +131,8 @@ class LocalRunner(Runner):
                     # TODO make all this configurable.
                     props = self._gym.get_actor_dof_properties(env, actor_handle)
                     props["driveMode"].fill(gymapi.DOF_MODE_POS)
-                    props["stiffness"].fill(1000.0)
-                    props["damping"].fill(600.0)
+                    props["stiffness"].fill(0.5)
+                    props["damping"].fill(0.01)
                     self._gym.set_actor_dof_properties(env, actor_handle, props)
 
                     all_rigid_props = self._gym.get_actor_rigid_shape_properties(
