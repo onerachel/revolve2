@@ -22,7 +22,7 @@ async def main() -> None:
     POPULATION_SIZE = 100
     SIGMA = 0.1
     LEARNING_RATE = 0.05
-    NUM_GENERATIONS = 100
+    NUM_GENERATIONS = 50
 
     SIMULATION_TIME = 30
     SAMPLING_FREQUENCY = 5
@@ -46,26 +46,34 @@ async def main() -> None:
     body = make_body()
 
     process_id = process_id_gen.gen()
-    # maybe_optimizer = await Optimizer.from_database(
-    #    database, process_id, process_id_gen, rng, POPULATION_SIZE, SIGMA, LEARNING_RATE
-    # )
-    # if maybe_optimizer is not None:
-    #    optimizer = maybe_optimizer
-    # else:
-    optimizer = await Optimizer.new(
-        database,
-        process_id,
-        process_id_gen,
-        rng,
-        POPULATION_SIZE,
-        SIGMA,
-        LEARNING_RATE,
-        body,
+    maybe_optimizer = await Optimizer.from_database(
+        database=database,
+        process_id=process_id,
+        process_id_gen=process_id_gen,
+        rng=rng,
+        robot_body=body,
         simulation_time=SIMULATION_TIME,
         sampling_frequency=SAMPLING_FREQUENCY,
         control_frequency=CONTROL_FREQUENCY,
         num_generations=NUM_GENERATIONS,
     )
+    if maybe_optimizer is not None:
+        optimizer = maybe_optimizer
+    else:
+        optimizer = await Optimizer.new(
+            database,
+            process_id,
+            process_id_gen,
+            rng,
+            POPULATION_SIZE,
+            SIGMA,
+            LEARNING_RATE,
+            body,
+            simulation_time=SIMULATION_TIME,
+            sampling_frequency=SAMPLING_FREQUENCY,
+            control_frequency=CONTROL_FREQUENCY,
+            num_generations=NUM_GENERATIONS,
+        )
 
     logging.info("Starting optimization process..")
 

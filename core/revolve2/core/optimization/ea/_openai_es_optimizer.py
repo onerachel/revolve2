@@ -1,3 +1,4 @@
+from sqlalchemy.exc import OperationalError
 from revolve2.core.optimization import Process, ProcessIdGen
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -11,6 +12,9 @@ from random import Random
 import numpy as np
 import numpy.typing as npt
 from typing import Optional
+from sqlalchemy.future import select
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+import pickle
 
 
 class OpenaiESOptimizer(ABC, Process):
@@ -88,12 +92,13 @@ class OpenaiESOptimizer(ABC, Process):
         await Ndarray1xnSerializer.create_tables(session)
 
         dbmeanid = (await Ndarray1xnSerializer.to_database(session, [self.__mean]))[0]
-        dbopt = DBOpenaiESOptimizer(
+        dbopt = DbOpenaiESOptimizer(
             process_id=self.__process_id,
             population_size=self.__population_size,
             sigma=self.__sigma,
             learning_rate=self.__learning_rate,
             initial_mean=dbmeanid,
+            initial_rng=pickle.dumps(self.__rng.getstate()),
         )
         session.add(dbopt)
 
@@ -103,8 +108,61 @@ class OpenaiESOptimizer(ABC, Process):
         session: AsyncSession,
         process_id: int,
         process_id_gen: ProcessIdGen,
+        rng: Random,
     ) -> bool:
-        pass  # TODO
+        self.__database = database
+        self.__process_id = process_id
+        self.__process_id_gen = process_id_gen
+
+        try:
+            opt_row = (
+                (
+                    await session.execute(
+                        select(DbOpenaiESOptimizer).filter(
+                            DbOpenaiESOptimizer.process_id == self.__process_id
+                        )
+                    )
+                )
+                .scalars()
+                .one()
+            )
+        except MultipleResultsFound as err:
+            raise IncompatibleError() from err
+        except (NoResultFound, OperationalError):
+            return False
+
+        self.__population_size = opt_row.population_size
+        self.__sigma = opt_row.sigma
+        self.__learning_rate = opt_row.learning_rate
+
+        db_state = (
+            (
+                await session.execute(
+                    select(DbOpenaiESOptimizerState)
+                    .filter(DbOpenaiESOptimizerState.process_id == self.__process_id)
+                    .order_by(DbOpenaiESOptimizerState.gen_num.desc())
+                )
+            )
+            .scalars()
+            .first()
+        )
+
+        self.__rng = rng  # set state from database below
+
+        if db_state is None:
+            self.__gen_num = 0
+            db_mean_id = opt_row.initial_mean
+            self.__rng.setstate(pickle.loads(opt_row.initial_rng))
+        else:
+            self.__gen_num = db_state.gen_num
+            db_mean_id = db_state.mean
+            self.__rng.setstate(pickle.loads(db_state.rng))
+
+        self.__mean = (await Ndarray1xnSerializer.from_database(session, [db_mean_id]))[
+            0
+        ]
+
+        return True
 
     async def run(self) -> None:
         while self.__safe_must_do_next_gen():
@@ -133,12 +191,25 @@ class OpenaiESOptimizer(ABC, Process):
 
             async with AsyncSession(self.__database) as session:
                 async with session.begin():
+                    db_mean_id = (
+                        await Ndarray1xnSerializer.to_database(session, [self.__mean])
+                    )[0]
+
+                    dbopt = DbOpenaiESOptimizerState(
+                        process_id=self.__process_id,
+                        gen_num=self.__gen_num,
+                        mean=db_mean_id,
+                        rng=pickle.dumps(self.__rng.getstate()),
+                    )
+
+                    session.add(dbopt)
+
                     db_individual_ids = await Ndarray1xnSerializer.to_database(
                         session, population
                     )
 
                     dbgens = [
-                        DBOpenaiESOptimizerGeneration(
+                        DbOpenaiESOptimizerIndividual(
                             process_id=self.__process_id,
                             gen_num=self.__gen_num,
                             gen_index=index,
@@ -170,7 +241,7 @@ class OpenaiESOptimizer(ABC, Process):
 DbBase = declarative_base()
 
 
-class DBOpenaiESOptimizer(DbBase):
+class DbOpenaiESOptimizer(DbBase):
     __tablename__ = "openaies_optimizer"
 
     process_id = sqlalchemy.Column(
@@ -185,10 +256,22 @@ class DBOpenaiESOptimizer(DbBase):
     initial_mean = sqlalchemy.Column(
         sqlalchemy.Integer, sqlalchemy.ForeignKey(DbNdarray1xn.id), nullable=False
     )
+    initial_rng = sqlalchemy.Column(sqlalchemy.PickleType, nullable=False)
 
 
-class DBOpenaiESOptimizerGeneration(DbBase):
-    __tablename__ = "openaies_optimizer_generation"
+class DbOpenaiESOptimizerState(DbBase):
+    __tablename__ = "openaies_optimizer_state"
+
+    process_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, primary_key=True)
+    gen_num = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, primary_key=True)
+    mean = sqlalchemy.Column(
+        sqlalchemy.Integer, sqlalchemy.ForeignKey(DbNdarray1xn.id), nullable=False
+    )
+    rng = sqlalchemy.Column(sqlalchemy.PickleType, nullable=False)
+
+
+class DbOpenaiESOptimizerIndividual(DbBase):
+    __tablename__ = "openaies_optimizer_individual"
 
     process_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, primary_key=True)
     gen_num = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, primary_key=True)

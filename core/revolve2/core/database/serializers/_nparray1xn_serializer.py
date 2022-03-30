@@ -5,7 +5,7 @@ from typing import List
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.future import select
 
-from revolve2.core.database import IncompatibleError, Tableable
+from revolve2.core.database import IncompatibleError
 
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
@@ -47,14 +47,23 @@ class Ndarray1xnSerializer(Serializer[npt.NDArray[np.float_]]):
     async def from_database(
         cls, session: AsyncSession, ids: List[int]
     ) -> List[npt.NDArray[np.float_]]:
-        asd = await session.execute(
-            select(DbNdarray1xnItem).filter(DbNdarray1xnItem.nparray1xn_id.in_(ids))
+        items = (
+            (
+                await session.execute(
+                    select(DbNdarray1xnItem)
+                    .filter(DbNdarray1xnItem.nparray1xn_id.in_(ids))
+                    .order_by(DbNdarray1xnItem.array_index)
+                )
+            )
+            .scalars()
+            .all()
         )
 
-        # id_map = {t.id: t for t in rows}
+        arrays_by_id = {i: [] for i in ids}
+        for item in items:
+            arrays_by_id[item.nparray1xn_id].append(item.value)
 
-        # return [FitnessFloat(id_map[id].fitness) for id in ids]
-        raise NotImplementedError()
+        return [np.array(arrays_by_id[id]) for id in ids]
 
 
 DbBase = declarative_base()

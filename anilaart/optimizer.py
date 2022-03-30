@@ -81,6 +81,42 @@ class Optimizer(OpenaiESOptimizer):
         self._control_frequency = control_frequency
         self._num_generations = num_generations
 
+    async def ainit_from_database(
+        self,
+        database: AsyncEngine,
+        session: AsyncSession,
+        process_id: int,
+        process_id_gen: ProcessIdGen,
+        rng: Random,
+        robot_body: Body,
+        simulation_time: int,
+        sampling_frequency: float,
+        control_frequency: float,
+        num_generations: int,
+    ) -> None:
+        if not await super().ainit_from_database(
+            database=database,
+            session=session,
+            process_id=process_id,
+            process_id_gen=process_id_gen,
+            rng=rng,
+        ):
+            return False
+
+        self._body = robot_body
+        body_analyzer = Analyzer(robot_body)
+        active_hinges = body_analyzer.active_hinges
+        self._num_internal_weights = len(active_hinges)
+
+        self._init_runner()
+
+        self._simulation_time = simulation_time
+        self._sampling_frequency = sampling_frequency
+        self._control_frequency = control_frequency
+        self._num_generations = num_generations
+
+        return True
+
     def _init_runner(self) -> None:
         self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
 

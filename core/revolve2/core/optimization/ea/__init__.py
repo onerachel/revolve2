@@ -3,8 +3,9 @@ from ._fitness_float import FitnessFloat
 from ._individual import Individual
 from ._openai_es_optimizer import (
     OpenaiESOptimizer,
-    DBOpenaiESOptimizer,
-    DBOpenaiESOptimizerGeneration,
+    DbOpenaiESOptimizer,
+    DbOpenaiESOptimizerState,
+    DbOpenaiESOptimizerIndividual,
 )
 
 __all__ = [
@@ -12,6 +13,7 @@ __all__ = [
     "Individual",
     "FitnessFloat",
     "OpenaiESOptimizer",
-    "DBOpenaiESOptimizer",
-    "DBOpenaiESOptimizerGeneration",
+    "DbOpenaiESOptimizer",
+    "DbOpenaiESOptimizerState",
+    "DbOpenaiESOptimizerIndividual",
 ]
