@@ -282,7 +282,7 @@ class LocalRunner(Runner):
         sim_params.physx.solver_type = 1
         sim_params.physx.num_position_iterations = 4
         sim_params.physx.num_velocity_iterations = 1
-        sim_params.physx.num_threads = 5
+        sim_params.physx.num_threads = 1
         sim_params.physx.use_gpu = False
 
         return sim_params
