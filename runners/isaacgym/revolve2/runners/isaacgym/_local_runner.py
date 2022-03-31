@@ -21,6 +21,8 @@ from revolve2.core.physics.running import (
 
 class LocalRunner(Runner):
     class _Simulator:
+        ENV_SIZE = 0.5
+
         @dataclass
         class GymEnv:
             env: gymapi.Env  # environment handle
@@ -81,11 +83,11 @@ class LocalRunner(Runner):
 
             num_per_row = int(math.sqrt(len(self._batch.environments)))
 
-            for env_descr in self._batch.environments:
+            for env_index, env_descr in enumerate(self._batch.environments):
                 env = self._gym.create_env(
                     self._sim,
-                    gymapi.Vec3(-5.0, -5.0, 0.0),  # TODO make these configurable
-                    gymapi.Vec3(5.0, 5.0, 5.0),
+                    gymapi.Vec3(-self.ENV_SIZE, -self.ENV_SIZE, 0.0),
+                    gymapi.Vec3(self.ENV_SIZE, self.ENV_SIZE, self.ENV_SIZE),
                     num_per_row,
                 )
 
@@ -127,7 +129,7 @@ class LocalRunner(Runner):
                         posed_actor.orientation.w,
                     )
                     actor_handle: int = self._gym.create_actor(
-                        env, actor_asset, pose, f"robot_{actor_index}", 0, 0
+                        env, actor_asset, pose, f"robot_{actor_index}", env_index, 0
                     )
 
                     # TODO make all this configurable.
@@ -163,8 +165,13 @@ class LocalRunner(Runner):
             viewer = self._gym.create_viewer(self._sim, gymapi.CameraProperties())
             if viewer is None:
                 raise RuntimeError()
-            cam_pos = gymapi.Vec3(-4.0, -1.0, 4.0)
-            cam_target = gymapi.Vec3(0.0, 0.0, 0.0)
+            num_per_row = math.sqrt(len(self._batch.environments))
+            cam_pos = gymapi.Vec3(
+                num_per_row / 2.0 - 0.5, num_per_row / 2.0 + 0.5, num_per_row
+            )
+            cam_target = gymapi.Vec3(
+                num_per_row / 2.0 - 0.5, num_per_row / 2.0 + 0.5 - 1, 0.0
+            )
             self._gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
 
             return viewer
@@ -272,7 +279,7 @@ class LocalRunner(Runner):
         sim_params.up_axis = gymapi.UP_AXIS_Z
         sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81)
 
-        sim_params.physx.solver_type = 5
+        sim_params.physx.solver_type = 1
         sim_params.physx.num_position_iterations = 4
         sim_params.physx.num_velocity_iterations = 1
         sim_params.physx.num_threads = 5
