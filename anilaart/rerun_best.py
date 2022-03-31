@@ -7,7 +7,7 @@ from revolve2.core.optimization.ea.evolutionary_optimizer_schema import (
     DbEvolutionaryOptimizerIndividual,
 )
 from revolve2.core.optimization.ea.fitness_float_schema import DbFitnessFloat
-from revolve2.core.optimization.ea import DBOpenaiESOptimizerGeneration
+from revolve2.core.optimization.ea import DbOpenaiESOptimizerIndividual
 from revolve2.core.database.serializers import DbNdarray1xnItem
 from optimize import make_body
 from optimizer import Brain
@@ -22,13 +22,13 @@ async def main() -> None:
         best_individual = (
             (
                 await session.execute(
-                    select(DBOpenaiESOptimizerGeneration).order_by(
-                        DBOpenaiESOptimizerGeneration.fitness.desc()
+                    select(DbOpenaiESOptimizerIndividual).order_by(
+                        DbOpenaiESOptimizerIndividual.fitness.desc()
                     )
                 )
             )
             .scalars()
-            .first()
+            .all()[0]
         )
 
         best_id = best_individual.individual
@@ -45,6 +45,7 @@ async def main() -> None:
         params = [p.value for p in dbparams]
 
         print(f"fitness: {best_individual.fitness}")
+        print(f"params: {params}")
 
         body = make_body()
         body_analyzer = Analyzer(body)
