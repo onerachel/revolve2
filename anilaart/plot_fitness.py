@@ -10,12 +10,8 @@ import pandas
 from sqlalchemy.future import select
 
 from revolve2.core.database import open_database_sqlite
-from revolve2.core.optimization.ea.evolutionary_optimizer_schema import (
-    DbEvolutionaryOptimizer,
-    DbEvolutionaryOptimizerGeneration,
-    DbEvolutionaryOptimizerIndividual,
-)
-from revolve2.core.optimization.ea.fitness_float_schema import DbFitnessFloat
+from revolve2.core.optimization.ea import DbOpenaiESOptimizerIndividual
+import sqlalchemy
 
 
 def plot(database: str, optimizer_id: int) -> None:
@@ -23,41 +19,19 @@ def plot(database: str, optimizer_id: int) -> None:
     db = open_database_sqlite(database)
     # read the optimizer data into a pandas dataframe
     df = pandas.read_sql(
-        select(
-            DbEvolutionaryOptimizer,
-            DbEvolutionaryOptimizerGeneration,
-            DbEvolutionaryOptimizerIndividual,
-            DbFitnessFloat,
-        ).filter(
-            (DbEvolutionaryOptimizer.process_id == optimizer_id)
-            & (
-                DbEvolutionaryOptimizerGeneration.evolutionary_optimizer_id
-                == DbEvolutionaryOptimizer.id
-            )
-            & (
-                DbEvolutionaryOptimizerIndividual.evolutionary_optimizer_id
-                == DbEvolutionaryOptimizer.id
-            )
-            & (DbEvolutionaryOptimizerIndividual.fitness_id == DbFitnessFloat.id)
-            & (
-                DbEvolutionaryOptimizerGeneration.individual_id
-                == DbEvolutionaryOptimizerIndividual.individual_id
-            )
+        select(DbOpenaiESOptimizerIndividual).filter(
+            DbOpenaiESOptimizerIndividual.process_id == optimizer_id
         ),
         db,
     )
     # calculate max min avg
-    describe = (
-        df[["generation_index", "fitness"]]
-        .groupby(by="generation_index")
-        .describe()["fitness"]
-    )
+    describe = df[["gen_num", "fitness"]].groupby(by="gen_num").describe()["fitness"]
     mean = describe[["mean"]].values.squeeze()
     std = describe[["std"]].values.squeeze()
 
     # plot max min mean, std
     describe[["max", "mean", "min"]].plot()
-    plt.fill_between(range(len(mean)), mean - std, mean + std)
+    plt.fill_between(range(1, len(mean) + 1), mean - std, mean + std)
     plt.show()
 
 

@@ -118,7 +118,7 @@ class Optimizer(OpenaiESOptimizer):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
+        self._runner = LocalRunner(LocalRunner.SimParams(), headless=False)
 
     async def _evaluate_population(
         self,

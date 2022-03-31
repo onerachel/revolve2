@@ -22,7 +22,7 @@ async def main() -> None:
     POPULATION_SIZE = 100
     SIGMA = 0.1
     LEARNING_RATE = 0.05
-    NUM_GENERATIONS = 50
+    NUM_GENERATIONS = 100
 
     SIMULATION_TIME = 30
     SAMPLING_FREQUENCY = 5
@@ -58,8 +58,12 @@ async def main() -> None:
         num_generations=NUM_GENERATIONS,
     )
     if maybe_optimizer is not None:
+        logging.info(
+            f"Recovered. Last finished generation: {maybe_optimizer.generation_number}."
+        )
         optimizer = maybe_optimizer
     else:
+        logging.info(f"No recovery data found. Starting at generation 0.")
         optimizer = await Optimizer.new(
             database,
             process_id,

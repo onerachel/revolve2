@@ -15,6 +15,7 @@ from typing import Optional
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 import pickle
+import logging
 
 
 class OpenaiESOptimizer(ABC, Process):
@@ -222,6 +223,8 @@ class OpenaiESOptimizer(ABC, Process):
                     ]
 
                     session.add_all(dbgens)
+
+                    logging.info(f"Finished generation {self.__gen_num}")
 
     @property
     def generation_number(self) -> Optional[int]:
