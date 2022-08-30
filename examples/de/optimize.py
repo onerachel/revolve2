@@ -1,24 +1,35 @@
-"""Setup and running of the openai es optimization program."""
-
 import logging
-from random import Random
+import math
+from random import Random, sample
 
 from optimizer import Optimizer
+
 from revolve2.core.database import open_async_database_sqlite
+from revolve2.core.modular_robot import ActiveHinge, Body, Brick
 from revolve2.core.optimization import ProcessIdGen
-from revolve2.standard_resources.modular_robots import gecko
+
+
+def make_body() -> Body:
+    body = Body()
+    body.core.left = ActiveHinge(0.0)
+    body.core.left.attachment = ActiveHinge(math.pi / 2.0)
+    body.core.left.attachment.attachment = Brick(0.0)
+    body.core.right = ActiveHinge(0.0)
+    body.core.right.attachment = ActiveHinge(math.pi / 2.0)
+    body.core.right.attachment.attachment = Brick(0.0)
+    body.finalize()
+    return body
 
 
 async def main() -> None:
-    """Run the optimization process."""
-    POPULATION_SIZE = 10
+    POPULATION_SIZE = 100
     SIGMA = 0.1
-    LEARNING_RATE = 0.005
-    NUM_GENERATIONS = 3
+    LEARNING_RATE = 0.05
+    NUM_GENERATIONS = 50
 
     SIMULATION_TIME = 10
     SAMPLING_FREQUENCY = 5
-    CONTROL_FREQUENCY = 60
+    CONTROL_FREQUENCY = 5
 
     logging.basicConfig(
         level=logging.INFO,
@@ -34,10 +45,11 @@ async def main() -> None:
 
     # process id generator
     process_id_gen = ProcessIdGen()
+
+    body = make_body()
+
     process_id = process_id_gen.gen()
-
-    body = gecko()
-
+    print(process_id)
     maybe_optimizer = await Optimizer.from_database(
         database=database,
         process_id=process_id,
@@ -55,7 +67,7 @@ async def main() -> None:
         )
         optimizer = maybe_optimizer
     else:
-        logging.info("No recovery data found. Starting at generation 0.")
+        logging.info(f"No recovery data found. Starting at generation 0.")
         optimizer = await Optimizer.new(
             database,
             process_id,
@@ -75,7 +87,7 @@ async def main() -> None:
 
     await optimizer.run()
 
-    logging.info("Finished optimizing.")
+    logging.info(f"Finished optimizing.")
 
 
 if __name__ == "__main__":

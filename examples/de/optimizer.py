@@ -1,15 +1,16 @@
-"""Optimizer for finding a good modular robot brain using direct encoding of the CPG brain weights, OpenAI ES algoriothm, and simulation using mujoco."""
-
 import math
 from random import Random
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import numpy.typing as npt
 from pyrr import Quaternion, Vector3
-from revolve2.actor_controller import ActorController
 from revolve2.actor_controllers.cpg import CpgNetworkStructure
-from revolve2.core.modular_robot import Body
+from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio.session import AsyncSession
+
+from revolve2.actor_controller import ActorController
+from revolve2.core.modular_robot import Body, ModularRobot
 from revolve2.core.modular_robot.brains import (
     BrainCpgNetworkStatic,
     make_cpg_network_structure_neighbour,
@@ -26,18 +27,9 @@ from revolve2.core.physics.running import (
     Runner,
 )
 from revolve2.runners.isaacgym import LocalRunner
-# from revolve2.runners.mujoco import LocalRunner
-from sqlalchemy.ext.asyncio import AsyncEngine
-from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
 class Optimizer(OpenaiESOptimizer):
-    """
-    Optimizer for the problem.
-
-    Uses the generic EA optimizer as a base.
-    """
-
     _body: Body
     _actor: Actor
     _dof_ids: List[int]
@@ -68,34 +60,13 @@ class Optimizer(OpenaiESOptimizer):
         control_frequency: float,
         num_generations: int,
     ) -> None:
-        """
-        Initialize this class async.
-
-        Called when creating an instance using `new`.
-
-        :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
-        :param process_id: Unique identifier in the completely program specifically made for this optimizer.
-        :param process_id_gen: Can be used to create more unique identifiers.
-        :param rng: Random number generator.
-        :param population_size: Population size for the OpenAI ES algorithm.
-        :param sigma: Standard deviation for the OpenAI ES algorithm.
-        :param learning_rate: Directional vector gain for OpenAI ES algorithm.
-        :param robot_body: The body to optimize the brain for.
-        :param simulation_time: Time in second to simulate the robots for.
-        :param sampling_frequency: Sampling frequency for the simulation. See `Batch` class from physics running.
-        :param control_frequency: Control frequency for the simulation. See `Batch` class from physics running.
-        :param num_generations: Number of generation to run the optimizer for.
-        """
         self._body = robot_body
         self._init_actor_and_cpg_network_structure()
 
         nprng = np.random.Generator(
             np.random.PCG64(rng.randint(0, 2**63))
         )  # rng is currently not numpy, but this would be very convenient. do this until that is resolved.
-        initial_mean = nprng.standard_normal(
-            self._cpg_network_structure.num_connections
-        )
+        initial_mean = nprng.standard_normal(self._cpg_network_structure.num_params)
 
         await super().ainit_new(
             database=database,
@@ -129,23 +100,6 @@ class Optimizer(OpenaiESOptimizer):
         control_frequency: float,
         num_generations: int,
     ) -> bool:
-        """
-        Try to initialize this class async from a database.
-
-        Called when creating an instance using `from_database`.
-
-        :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
-        :param process_id: Unique identifier in the completely program specifically made for this optimizer.
-        :param process_id_gen: Can be used to create more unique identifiers.
-        :param rng: Random number generator.
-        :param robot_body: The body to optimize the brain for.
-        :param simulation_time: Time in second to simulate the robots for.
-        :param sampling_frequency: Sampling frequency for the simulation. See `Batch` class from physics running.
-        :param control_frequency: Control frequency for the simulation. See `Batch` class from physics running.
-        :param num_generations: Number of generation to run the optimizer for.
-        :returns: True if this complete object could be deserialized from the database.
-        """
         if not await super().ainit_from_database(
             database=database,
             session=session,
@@ -181,7 +135,6 @@ class Optimizer(OpenaiESOptimizer):
 
     def _init_runner(self) -> None:
         self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
-        # self._runner = LocalRunner(headless=True) #mujoco
 
     async def _evaluate_population(
         self,
@@ -203,10 +156,8 @@ class Optimizer(OpenaiESOptimizer):
             initial_state = self._cpg_network_structure.make_uniform_state(
                 0.5 * math.pi / 2.0
             )
-            weight_matrix = (
-                self._cpg_network_structure.make_connection_weights_matrix_from_params(
-                    params
-                )
+            weight_matrix = self._cpg_network_structure.make_weight_matrix_from_params(
+                params
             )
             dof_ranges = self._cpg_network_structure.make_uniform_dof_ranges(1.0)
             brain = BrainCpgNetworkStatic(
@@ -236,24 +187,22 @@ class Optimizer(OpenaiESOptimizer):
             )
             batch.environments.append(env)
 
-        batch_results = await self._runner.run_batch(batch)
+        states = await self._runner.run_batch(batch)
 
         return np.array(
             [
                 self._calculate_fitness(
-                    environment_result.environment_states[0].actor_states[0],
-                    environment_result.environment_states[-1].actor_states[0],
+                    states[0].envs[i].actor_states[0],
+                    states[-1].envs[i].actor_states[0],
                 )
-                for environment_result in batch_results.environment_results
+                for i in range(len(population))
             ]
         )
 
-    def _control(
-        self, environment_index: int, dt: float, control: ActorControl
-    ) -> None:
-        controller = self._controllers[environment_index]
-        controller.step(dt)
-        control.set_dof_targets(0, controller.get_dof_targets())
+    def _control(self, dt: float, control: ActorControl) -> None:
+        for control_i, controller in enumerate(self._controllers):
+            controller.step(dt)
+            control.set_dof_targets(control_i, 0, controller.get_dof_targets())
 
     @staticmethod
     def _calculate_fitness(begin_state: ActorState, end_state: ActorState) -> float:

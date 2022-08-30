@@ -22,12 +22,12 @@ from standard_resources.revolve2.standard_resources import modular_robots
 #     return body
 
 async def main() -> None:
-    POPULATION_SIZE = 100
+    POPULATION_SIZE = 10
     SIGMA = 0.1  # noise standard deviation
     LEARNING_RATE = 0.005
-    NUM_GENERATIONS = 300
+    NUM_GENERATIONS = 30
 
-    SIMULATION_TIME = 10
+    SIMULATION_TIME = 30
     SAMPLING_FREQUENCY = 5
     CONTROL_FREQUENCY = 5
 
@@ -45,14 +45,12 @@ async def main() -> None:
 
     # process id generator
     process_id_gen = ProcessIdGen()
+    process_id = process_id_gen.gen()
 
     # body = make_body()
-    body = modular_robots.get("park")
+    body = modular_robots.get("penguin")
     # ant, babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
     # snake, spider, stingray, tinlicker, turtle, ww, zappa, park,
-
-    process_id = process_id_gen.gen()
-    print(process_id)
     maybe_optimizer = await Optimizer.from_database(
         database=database,
         process_id=process_id,

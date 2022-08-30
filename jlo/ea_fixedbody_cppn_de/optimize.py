@@ -7,18 +7,19 @@ from optimizer import Optimizer
 from revolve2.core.database import open_async_database_sqlite
 from revolve2.core.modular_robot import ActiveHinge, Body, Brick
 from revolve2.core.optimization import ProcessIdGen
+from standard_resources.revolve2.standard_resources import modular_robots
 
 
-def make_body() -> Body:
-    body = Body()
-    body.core.left = ActiveHinge(0.0)
-    body.core.left.attachment = ActiveHinge(math.pi / 2.0)
-    body.core.left.attachment.attachment = Brick(0.0)
-    body.core.right = ActiveHinge(0.0)
-    body.core.right.attachment = ActiveHinge(math.pi / 2.0)
-    body.core.right.attachment.attachment = Brick(0.0)
-    body.finalize()
-    return body
+# def make_body() -> Body:
+#     body = Body()
+#     body.core.left = ActiveHinge(0.0)
+#     body.core.left.attachment = ActiveHinge(math.pi / 2.0)
+#     body.core.left.attachment.attachment = Brick(0.0)
+#     body.core.right = ActiveHinge(0.0)
+#     body.core.right.attachment = ActiveHinge(math.pi / 2.0)
+#     body.core.right.attachment.attachment = Brick(0.0)
+#     body.finalize()
+#     return body
 
 
 async def main() -> None:
@@ -46,7 +47,10 @@ async def main() -> None:
     # process id generator
     process_id_gen = ProcessIdGen()
 
-    body = make_body()
+    # body = make_body()
+    body = modular_robots.get("park")
+    # ant, babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
+    # snake, spider, stingray, tinlicker, turtle, ww, zappa, park,
 
     process_id = process_id_gen.gen()
     print(process_id)

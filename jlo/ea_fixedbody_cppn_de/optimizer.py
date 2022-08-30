@@ -17,6 +17,7 @@ from revolve2.core.modular_robot.brains import (
 )
 from revolve2.core.optimization import ProcessIdGen
 from revolve2.core.optimization.ea.openai_es import OpenaiESOptimizer
+from revolve2.core.optimization.ea.de import DEOptimizer
 from revolve2.core.physics.actor import Actor
 from revolve2.core.physics.running import (
     ActorControl,
@@ -29,7 +30,7 @@ from revolve2.core.physics.running import (
 from revolve2.runners.isaacgym import LocalRunner
 
 
-class Optimizer(OpenaiESOptimizer):
+class Optimizer(DEOptimizer):
     _body: Body
     _actor: Actor
     _dof_ids: List[int]
