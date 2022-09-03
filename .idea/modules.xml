@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/revolve2.iml" filepath="$PROJECT_DIR$/.idea/revolve2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../revolve2-working/revolve2-backup/.idea/revolve2-backup.iml" filepath="$PROJECT_DIR$/../revolve2-working/revolve2-backup/.idea/revolve2-backup.iml" />
     </modules>
   </component>
 </project>

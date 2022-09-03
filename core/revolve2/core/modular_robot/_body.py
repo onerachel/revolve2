@@ -40,7 +40,7 @@ class Body:
         """
         Check if the robot has been finalized.
 
-        :returns: Wether the robot has been finalized.
+        :returns: Whether the robot has been finalized.
         """
         return self._is_finalized
 

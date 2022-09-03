@@ -48,7 +48,7 @@ async def main() -> None:
     process_id = process_id_gen.gen()
 
     # body = make_body()
-    body = modular_robots.get("penguin")
+    body = modular_robots.get("babyb")
     # ant, babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
     # snake, spider, stingray, tinlicker, turtle, ww, zappa, park,
     maybe_optimizer = await Optimizer.from_database(

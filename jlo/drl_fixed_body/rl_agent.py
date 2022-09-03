@@ -55,6 +55,8 @@ class Agent:
 
 def make_agent() -> Agent:
     body = robot_zoo.make_ant_body()
+    # ant, babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
+    # snake, spider, stingray, tinlicker, turtle, ww, zappa, park,
     brain = None
 
     return Agent(body, brain)

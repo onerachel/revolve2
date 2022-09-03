@@ -272,18 +272,19 @@ class LocalRunnerTrain(Runner):
                     new_actions, new_values, new_logps = self._batch.control(control_step, control, new_observations)
 
                     if timestep < NUM_STEPS:
-                        for (env_index, actor_index, targets) in control._dof_targets:
-                            env_handle = self._gymenvs[env_index].env
-                            actor_handle = self._gymenvs[env_index].actors[actor_index]
-                            actor = (
-                                self._batch.environments[env_index]
-                                .actors[actor_index]
-                                .actor
-                            )
+                        for env_index in range(self._num_agents):
+                            for (actor_index, targets) in control._dof_targets:
+                                env_handle = self._gymenvs[env_index].env
+                                actor_handle = self._gymenvs[env_index].actors[actor_index]
+                                actor = (
+                                    self._batch.environments[env_index]
+                                    .actors[actor_index]
+                                    .actor
+                                )
 
-                            self.set_actor_dof_position_targets(
-                                env_handle, actor_handle, actor, targets
-                            )
+                                self.set_actor_dof_position_targets(
+                                    env_handle, actor_handle, actor, targets
+                                )
 
                     if timestep > 0:
                         # get the new positions of each agent
@@ -419,23 +420,33 @@ class LocalRunnerTrain(Runner):
                 environment_results.environment_states.append(env_state)
 
         def _calculate_velocity(self, state1, state2):
+            # """
+            # Calculate the velocity for all agents at a timestep
+            # """
+            # dx = state2.x - state1.x
+            # dy = state2.y - state1.y
+            # a = math.sqrt(state1.x ** 2 + state1.y ** 2)
+            # b = math.sqrt(state2.x ** 2 + state2.y ** 2)
+            # return b - a
+
             """
-            Calculate the velocity for all agents at a timestep
+            absolute distance traveled on the xy plane (meter). To calculate velocity,
+            the returned value has to de divided by the simulation time (sec)
             """
-            dx = state2.x - state1.x
-            dy = state2.y - state1.y
-            a = math.sqrt(state1.x ** 2 + state1.y ** 2)
-            b = math.sqrt(state2.x ** 2 + state2.y ** 2)
-            return b - a
+            return math.sqrt(
+                (state1.x - state2.x) ** 2
+                + ((state1.y - state2.y) ** 2)
+            )
 
         def _set_initial_position(self, ):
             control = ActorControl()
             num_joints = len(self._batch.environments[0].actors[0].actor.joints)
-            for control_i in range(self._num_agents):
+            for env_index in range(self._num_agents):
                 action = np.random.uniform(low=-1, high=1, size=num_joints).astype(np.float32)
-                control.set_dof_targets(control_i, 0, action)
+                control.set_dof_targets(0, action)
 
-                for env_index, actor_index, targets in control._dof_targets:
+
+                for actor_index, targets in control._dof_targets:
                     env_handle = self._gymenvs[env_index].env
                     actor_handle = self._gymenvs[env_index].actors[actor_index]
                     actor = (

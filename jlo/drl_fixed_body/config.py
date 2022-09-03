@@ -2,7 +2,7 @@
 # simulation parameters
 SAMPLING_FREQUENCY = 5
 CONTROL_FREQUENCY = 5
-SIMULATION_TIME = 10 #50*32
+SIMULATION_TIME = 30 #50*32
 
 # PPO parameters
 PPO_CLIP_EPS = 0.2 # Agrim 1e-5

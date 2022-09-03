@@ -92,7 +92,6 @@ def make_spider_body() -> DirectTreeGenotype:
     body.core.back.attachment.front = ActiveHinge(0.0)
     body.core.back.attachment.front.attachment = Brick(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -119,7 +118,6 @@ def make_gecko_body() -> DirectTreeGenotype:
     body.core.back.attachment.front.attachment.right = ActiveHinge(0.0)
     body.core.back.attachment.front.attachment.right.attachment = Brick(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -149,7 +147,6 @@ def make_babya_body() -> DirectTreeGenotype:
     body.core.back.attachment.front.attachment.right = ActiveHinge(0.0)
     body.core.back.attachment.front.attachment.right.attachment = Brick(0.0)
 
-    body.finalize()
     return body
 
 
@@ -181,7 +178,6 @@ def make_ant_body() -> DirectTreeGenotype:
     body.core.back.attachment.front.attachment.right = ActiveHinge(0.0)
     body.core.back.attachment.front.attachment.right.attachment = Brick(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -234,7 +230,6 @@ def make_salamander_body() -> DirectTreeGenotype:
         np.pi / 2.0
     )
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -261,7 +256,6 @@ def make_blokky_body() -> DirectTreeGenotype:
     body.core.back.front.attachment.attachment.right.front.right = Brick(0.0)
     body.core.back.front.attachment.attachment.right.front.front = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -292,7 +286,6 @@ def make_park_body() -> DirectTreeGenotype:
         0.0
     )
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -328,7 +321,6 @@ def make_babyb_body() -> DirectTreeGenotype:
     body.core.back = ActiveHinge(np.pi / 2.0)
     body.core.back.attachment = Brick(-np.pi / 2.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -359,7 +351,6 @@ def make_garrix_body() -> DirectTreeGenotype:
 
     body.core.left.attachment.attachment.attachment.left.attachment = part2
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -389,7 +380,6 @@ def make_insect_body() -> DirectTreeGenotype:
         np.pi / 2.0
     )
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -421,7 +411,6 @@ def make_linkin_body() -> DirectTreeGenotype:
     part2.right.attachment.attachment.attachment = ActiveHinge(np.pi / 2.0)
     part2.right.attachment.attachment.attachment.attachment = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -450,7 +439,6 @@ def make_longleg_body() -> DirectTreeGenotype:
     part2.left.attachment.attachment.left = ActiveHinge(np.pi / 2.0)
     part2.left.attachment.attachment.left.attachment = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -495,7 +483,6 @@ def make_penguin_body() -> DirectTreeGenotype:
     part2.right.attachment.attachment.attachment.right = Brick(0.0)
     part2.right.attachment.attachment.attachment.right.front = ActiveHinge(np.pi / 2.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -524,7 +511,6 @@ def make_pentapod_body() -> DirectTreeGenotype:
     part2.front.attachment.front.attachment.left = ActiveHinge(0.0)
     part2.front.attachment.front.attachment.right = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -553,7 +539,6 @@ def make_queen_body() -> DirectTreeGenotype:
     part2.right.right.front = ActiveHinge(np.pi / 2.0)
     part2.right.right.front.attachment = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -580,7 +565,6 @@ def make_squarish_body() -> DirectTreeGenotype:
     part2.right.attachment.left = Brick(0.0)
     part2.right.attachment.left.left = Brick(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -626,7 +610,6 @@ def make_snake_body() -> DirectTreeGenotype:
         np.pi / 2.0
     )
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -657,7 +640,6 @@ def make_stingray_body() -> DirectTreeGenotype:
         Brick(0.0)
     )
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -685,8 +667,6 @@ def make_tinlicker_body() -> DirectTreeGenotype:
     part2.left.right.front.attachment.front = ActiveHinge(np.pi / 2.0)
     part2.left.right.front.attachment.right = Brick(0.0)
     part2.left.right.front.attachment.right.right = ActiveHinge(np.pi / 2.0)
-
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -721,7 +701,6 @@ def make_turtle_body() -> DirectTreeGenotype:
     part2.right.attachment.left.attachment.attachment = ActiveHinge(0.0)
     part2.right.attachment.left.attachment.attachment.attachment = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -750,7 +729,6 @@ def make_ww_body() -> DirectTreeGenotype:
     part2.front.right.attachment.left.attachment = ActiveHinge(0.0)
     part2.front.right.attachment.left.attachment.attachment = ActiveHinge(-np.pi / 2.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)
 
 
@@ -779,5 +757,4 @@ def make_zappa_body() -> DirectTreeGenotype:
     part2.left.attachment.left.attachment = Brick(0.0)
     part2.left.attachment.front = ActiveHinge(0.0)
 
-    body.finalize()
     return DirectTreeGenotype(body)

@@ -25,8 +25,8 @@ from revolve2.core.physics.running import (
     PosedActor,
     Runner,
 )
-from revolve2.runners.isaacgym import LocalRunner
-# from revolve2.runners.mujoco import LocalRunner
+# from revolve2.runners.isaacgym import LocalRunner
+from revolve2.runners.mujoco import LocalRunner
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
@@ -180,8 +180,8 @@ class Optimizer(OpenaiESOptimizer):
         )
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
-        # self._runner = LocalRunner(headless=True) #mujoco
+        # self._runner = LocalRunner(LocalRunner.SimParams(), headless=True) #isaacgym
+        self._runner = LocalRunner(headless=True) #mujoco
 
     async def _evaluate_population(
         self,
