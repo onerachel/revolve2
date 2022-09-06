@@ -18,9 +18,12 @@ from revolve2.core.physics.running import (
     Runner,
 )
 from jlo.drl_fixed_body.rl_runner_train import LocalRunnerTrain
+# from jlo.drl_fixed_body.rl_runner_mujoco import LocalRunnerTrain
+
+import os
 
 
-class RLOptimizer:
+class RLOptimizer():
     _runner: Runner
 
     _controller: ActorController
@@ -52,7 +55,9 @@ class RLOptimizer:
         self._num_agents = num_agents
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunnerTrain(LocalRunnerTrain.SimParams(), headless=False)
+        self._runner = LocalRunnerTrain(LocalRunnerTrain.SimParams(), headless=(not self._visualize)) ## isaac gym
+        # self._runner = LocalRunnerTrain(headless=True)  # mujoco
+
 
     def _control(self, dt: float, control: ActorControl, observations):
         num_agents = observations[0].shape[0]
@@ -66,11 +71,12 @@ class RLOptimizer:
             for i, obs in enumerate(observations):
                 agent_obs[i] = obs[control_i]
             action, value, logp = self._controller.get_dof_targets(agent_obs)
-            control.set_dof_targets(0, torch.clip(action, -0.8, 0.8)) #removed control_i
+            control.set_dof_targets(0, torch.clip(action, -0.8, 0.8))  # Removed control_i,
             actions.append(action.tolist())
             values.append(value.tolist())
             logps.append(logp.tolist())
         return actions, values, logps
+
 
     async def train(self, agent, from_checkpoint: bool = False):
         """
@@ -119,6 +125,7 @@ class RLOptimizer:
             batch.environments.append(env)
 
         # run the simulation
-        await self._runner.run_batch(batch, self._controller, self._num_agents)
+        await self._runner.run_batch(batch, self._controller, self._num_agents) #isaac gym
+        # await self._runner.run_batch(batch) #mujoco
 
-        return 
+        return

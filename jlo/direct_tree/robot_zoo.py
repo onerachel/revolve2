@@ -147,7 +147,7 @@ def make_babya_body() -> DirectTreeGenotype:
     body.core.back.attachment.front.attachment.right = ActiveHinge(0.0)
     body.core.back.attachment.front.attachment.right.attachment = Brick(0.0)
 
-    return body
+    return DirectTreeGenotype(body)
 
 
 def make_ant_body() -> DirectTreeGenotype:

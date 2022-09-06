@@ -1,3 +1,4 @@
+import logging
 import math
 import multiprocessing as mp
 import os
@@ -5,6 +6,7 @@ import tempfile
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
+import colored
 from isaacgym import gymapi
 from matplotlib.pyplot import axis
 import numpy as np
@@ -194,13 +196,13 @@ class LocalRunnerTrain(Runner):
                     self._gym.set_actor_rigid_shape_properties(
                         env, actor_handle, all_rigid_props
                     )
-                    # TODO
-                    # self.set_actor_dof_position_targets(
-                    #    env, actor_handle, posed_actor.actor, posed_actor.dof_states
-                    # )
-                    # self.set_actor_dof_positions(
-                    #    env, actor_handle, posed_actor.actor, posed_actor.dof_states
-                    # )
+
+                    self.set_actor_dof_position_targets(
+                       env, actor_handle, posed_actor.actor, posed_actor.dof_states
+                    )
+                    self.set_actor_dof_positions(
+                       env, actor_handle, posed_actor.actor, posed_actor.dof_states
+                    )
 
             return gymenvs
 
@@ -420,23 +422,23 @@ class LocalRunnerTrain(Runner):
                 environment_results.environment_states.append(env_state)
 
         def _calculate_velocity(self, state1, state2):
-            # """
-            # Calculate the velocity for all agents at a timestep
-            # """
-            # dx = state2.x - state1.x
-            # dy = state2.y - state1.y
-            # a = math.sqrt(state1.x ** 2 + state1.y ** 2)
-            # b = math.sqrt(state2.x ** 2 + state2.y ** 2)
-            # return b - a
+            """
+            Calculate the velocity for all agents at a timestep
+            """
+            dx = state2.x - state1.x
+            dy = state2.y - state1.y
+            a = math.sqrt(state1.x ** 2 + state1.y ** 2)
+            b = math.sqrt(state2.x ** 2 + state2.y ** 2)
+            return b - a
 
-            """
-            absolute distance traveled on the xy plane (meter). To calculate velocity,
-            the returned value has to de divided by the simulation time (sec)
-            """
-            return math.sqrt(
-                (state1.x - state2.x) ** 2
-                + ((state1.y - state2.y) ** 2)
-            )
+            # """
+            # absolute distance traveled on the xy plane (meter). To calculate velocity,
+            # the returned value has to de divided by the simulation time (sec)
+            # """
+            # return math.sqrt(
+            #     (state1.x - state2.x) ** 2
+            #     + ((state1.y - state2.y) ** 2)
+            # )
 
         def _set_initial_position(self, ):
             control = ActorControl()
@@ -499,7 +501,17 @@ class LocalRunnerTrain(Runner):
         return sim_params
 
     async def run_batch(self, batch: Batch, controller, num_agents) -> BatchResults:
-        # sadly we must run Isaac Gym in a subprocess, because it has some big memory leaks.
+        """
+        Run the provided batch by simulating each contained environment.
+
+        :param batch: The batch to run.
+        :controller
+        :num_agents
+        :returns: List of simulation states in ascending order of time.
+        """
+        logging.info(
+            "\n--- Begin Isaac Gym log ----------------------------------------------------------------------------"
+        )
         result_queue: mp.Queue = mp.Queue()  # type: ignore # TODO
         process = mp.Process(
             target=self._run_batch_impl,
@@ -522,6 +534,10 @@ class LocalRunnerTrain(Runner):
         while (state := result_queue.get()) is not None:
             states.append(state)
         process.join()
+        logging.info(
+            colored.attr("reset")
+            + "--- End Isaac Gym log ------------------------------------------------------------------------------\n"
+        )
         return states
 
     @classmethod
