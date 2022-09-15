@@ -24,7 +24,7 @@ def plot(database: str, process_id: int) -> None:
         db,
     )
     print(df)
-    df.to_csv('raw_data.csv', index=False)
+    df.to_csv('openaies_babyb_2.csv', index=False)
 
     # calculate max min avg
     describe = df[["gen_num", "fitness"]].groupby(by="gen_num").describe()["fitness"]

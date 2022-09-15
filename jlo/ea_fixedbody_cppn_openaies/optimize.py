@@ -41,16 +41,16 @@ async def main() -> None:
     rng.seed(0)
 
     # database
-    database = open_async_database_sqlite("./database")
+    database = open_async_database_sqlite("./database_zappa_1")
 
     # process id generator
     process_id_gen = ProcessIdGen()
     process_id = process_id_gen.gen()
 
     # body = make_body()
-    body = modular_robots.get("babyb")
-    # ant, babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
-    # snake, spider, stingray, tinlicker, turtle, ww, zappa, park,
+    body = modular_robots.get("zappa")
+    #  babya, babyb, blokky, garrix, gecko, insect, linkin, longleg, penguin, pentapod, queen, salamander, squarish,
+    # snake, spider, stingray, tinlicker, turtle, ww, zappa, (park,ant)
     maybe_optimizer = await Optimizer.from_database(
         database=database,
         process_id=process_id,
