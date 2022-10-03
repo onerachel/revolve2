@@ -17,6 +17,7 @@ Assuming that you have downloaded isaacgym and installed virtualenv, simple step
 ``` 
 cd revolve2/
 python3.8 -m virtualenv .venv
+or virtualenv -p python3.8 .venv
 source .venv/bin/activate
 pip install ~/isaacgym/python/
 ./dev_requirements.sh

@@ -1,8 +1,8 @@
-"""Optimizer for finding a good modular robot brain using direct encoding of the CPG brain weights, OpenAI ES algoriothm, and simulation using mujoco."""
 
 import math
 from random import Random
 from typing import List
+from black import schedule_formatting
 
 import numpy as np
 import numpy.typing as npt
@@ -16,6 +16,7 @@ from revolve2.core.modular_robot.brains import (
 )
 from revolve2.core.optimization import ProcessIdGen
 from revolve2.core.optimization.ea.openai_es import OpenaiESOptimizer
+from revde import RevDEOptimizer
 from revolve2.core.physics.actor import Actor
 from revolve2.core.physics.running import (
     ActorControl,
@@ -26,12 +27,11 @@ from revolve2.core.physics.running import (
     Runner,
 )
 from revolve2.runners.isaacgym import LocalRunner
-# from revolve2.runners.mujoco import LocalRunner
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
-class Optimizer(OpenaiESOptimizer):
+class Optimizer(RevDEOptimizer):
     """
     Optimizer for the problem.
 
@@ -60,13 +60,13 @@ class Optimizer(OpenaiESOptimizer):
         process_id_gen: ProcessIdGen,
         rng: Random,
         population_size: int,
-        sigma: float,
-        learning_rate: float,
         robot_body: Body,
         simulation_time: int,
         sampling_frequency: float,
         control_frequency: float,
         num_generations: int,
+        scaling: float,
+        cross_prob: float,
     ) -> None:
         """
         Initialize this class async.
@@ -93,9 +93,11 @@ class Optimizer(OpenaiESOptimizer):
         nprng = np.random.Generator(
             np.random.PCG64(rng.randint(0, 2**63))
         )  # rng is currently not numpy, but this would be very convenient. do this until that is resolved.
-        initial_mean = nprng.standard_normal(
-            self._cpg_network_structure.num_connections
-        )
+
+        nprng = np.random.Generator(
+            np.random.PCG64(rng.randint(0, 2**63))
+        )  # rng is currently not numpy, but this would be very convenient. do this until that is resolved.
+        initial_population = nprng.standard_normal((population_size, self._cpg_network_structure.num_connections))
 
         await super().ainit_new(
             database=database,
@@ -104,9 +106,9 @@ class Optimizer(OpenaiESOptimizer):
             process_id_gen=process_id_gen,
             rng=rng,
             population_size=population_size,
-            sigma=sigma,
-            learning_rate=learning_rate,
-            initial_mean=initial_mean,
+            initial_population=initial_population,
+            scaling=scaling,
+            cross_prob=cross_prob,
         )
 
         self._init_runner()
@@ -180,8 +182,7 @@ class Optimizer(OpenaiESOptimizer):
         )
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True) #isaacgym
-        #self._runner = LocalRunner(headless=True) #mujoco
+        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
 
     async def _evaluate_population(
         self,
